@@ -1,21 +1,21 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { randomMessage } from '../App';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import randomMessage from '../actions/randomMessage';
 
 function Greetings() {
-  const message = useSelector(state => state.message);
+  const message = useSelector((state) => state.message);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(randomMessage())
+    dispatch(randomMessage());
   }, []);
 
-  return(
+  return (
     <div>
       <h1>Your greeting message is:</h1>
       <p>{message}</p>
     </div>
-  )
+  );
 }
 
-export default Greetings
+export default Greetings;
