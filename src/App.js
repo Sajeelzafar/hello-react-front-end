@@ -1,23 +1,30 @@
-import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
+import Messages from './components/messages';
+import { useEffect, useState } from 'react';
+
+const API_URL = "http://localhost:3000/api/messages";
+
+function getAPIData() {
+  return axios.get(API_URL).then((response) => response.data);
+}
 
 function App() {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    let greeting = true;
+    getAPIData().then((msg) => {
+      if (greeting) {
+        setMessages(msg);
+      }
+    })
+    return () => (greeting = false);
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Messages messages={messages} />
     </div>
   );
 }
