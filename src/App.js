@@ -1,32 +1,44 @@
-import './App.css';
 import axios from 'axios';
-import Messages from './components/messages';
-import { useEffect, useState } from 'react';
+import Greetings from './components/greetings';
+import { configureStore, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Provider } from 'react-redux';
 
 const API_URL = "http://localhost:3000/api/messages";
 
-function getAPIData() {
+async function getAPIData() {
   return axios.get(API_URL).then((response) => response.data);
 }
 
-function App() {
-  const [messages, setMessages] = useState([]);
+export const randomMessage = createAsyncThunk(
+  'Random Message',
+  getAPIData
+);
 
-  useEffect(() => {
-    let greeting = true;
-    getAPIData().then((msg) => {
-      if (greeting) {
-        setMessages(msg);
-      }
+const messageSlice = createSlice({
+  name: 'messageReducer',
+  initialState: {message: null},
+  extraReducers: (builder) => {
+    builder.addCase(randomMessage.fulfilled, (state, action) => {
+      state.message = action.payload.greeting;
     })
-    return () => (greeting = false);
-  }, []);
+  }
+})
 
+const store = configureStore({
+  reducer: messageSlice.reducer,
+});
+
+function App() {
   return (
-    <div className="App">
-      <Messages messages={messages} />
-    </div>
-  );
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Greetings />} />
+        </Routes>
+      </BrowserRouter>
+    </Provider>
+  )
 }
 
 export default App;
